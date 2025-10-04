@@ -1,0 +1,94 @@
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+/**
+ * Simple student information record system
+ * - Add student
+ * - List students
+ * - Search by ID
+ */
+class Student {
+    private final String id;
+    private final String name;
+    private final String major;
+    private final double gpa;
+
+    public Student(String id, String name, String major, double gpa) {
+        this.id = id;
+        this.name = name;
+        this.major = major;
+        this.gpa = gpa;
+    }
+
+    public String getId() { return id; }
+    public String getName() { return name; }
+    public String getMajor() { return major; }
+    public double getGpa() { return gpa; }
+
+    @Override
+    public String toString() {
+        return String.format("ID: %s | Name: %s | Major: %s | GPA: %.2f", id, name, major, gpa);
+    }
+}
+
+public class StudentRecords {
+    private final List<Student> students = new ArrayList<>();
+
+    public void addStudent(Student s) {
+        students.add(s);
+    }
+
+    public List<Student> listStudents() {
+        return new ArrayList<>(students);
+    }
+
+    public Student findById(String id) {
+        return students.stream().filter(s -> s.getId().equalsIgnoreCase(id)).findFirst().orElse(null);
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        StudentRecords sr = new StudentRecords();
+
+        boolean running = true;
+        System.out.println("Student Records System");
+        while (running) {
+            System.out.println("\nOptions: 1) Add  2) List  3) Search by ID  4) Exit");
+            System.out.print("> ");
+            String opt = sc.nextLine().trim();
+            switch (opt) {
+                case "1":
+                    System.out.print("Student ID: ");
+                    String id = sc.nextLine().trim();
+                    System.out.print("Name: ");
+                    String name = sc.nextLine().trim();
+                    System.out.print("Major: ");
+                    String major = sc.nextLine().trim();
+                    System.out.print("GPA: ");
+                    double gpa = Double.parseDouble(sc.nextLine().trim());
+                    sr.addStudent(new Student(id, name, major, gpa));
+                    System.out.println("Student added.");
+                    break;
+                case "2":
+                    System.out.println("All students:");
+                    sr.listStudents().forEach(System.out::println);
+                    break;
+                case "3":
+                    System.out.print("Search ID: ");
+                    String q = sc.nextLine().trim();
+                    Student found = sr.findById(q);
+                    if (found != null) System.out.println(found);
+                    else System.out.println("Not found.");
+                    break;
+                case "4":
+                    running = false;
+                    System.out.println("Exiting.");
+                    break;
+                default:
+                    System.out.println("Invalid option.");
+            }
+        }
+        sc.close();
+    }
+}
