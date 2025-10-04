@@ -1,0 +1,75 @@
+import java.util.Scanner;
+
+/**
+ * Console 2-player Tic-Tac-Toe
+ */
+public class TicTacToe {
+    private final char[][] board = new char[3][3];
+    private char turn = 'X';
+
+    public TicTacToe() {
+        for (int i=0;i<3;i++) for (int j=0;j<3;j++) board[i][j] = ' ';
+    }
+
+    public boolean move(int r, int c) {
+        if (r < 0 || r >= 3 || c < 0 || c >= 3) return false;
+        if (board[r][c] != ' ') return false;
+        board[r][c] = turn;
+        return true;
+    }
+
+    public boolean checkWin() {
+        char t = turn;
+        for (int i=0;i<3;i++) if (board[i][0]==t && board[i][1]==t && board[i][2]==t) return true;
+        for (int j=0;j<3;j++) if (board[0][j]==t && board[1][j]==t && board[2][j]==t) return true;
+        if (board[0][0]==t && board[1][1]==t && board[2][2]==t) return true;
+        if (board[0][2]==t && board[1][1]==t && board[2][0]==t) return true;
+        return false;
+    }
+
+    public boolean boardFull() {
+        for (int i=0;i<3;i++) for (int j=0;j<3;j++) if (board[i][j]==' ') return false;
+        return true;
+    }
+
+    public void swapTurn() { turn = (turn == 'X') ? 'O' : 'X'; }
+    public char getTurn() { return turn; }
+
+    public void printBoard() {
+        System.out.println();
+        for (int i=0;i<3;i++) {
+            System.out.printf(" %c | %c | %c %n", board[i][0], board[i][1], board[i][2]);
+            if (i<2) System.out.println("---+---+---");
+        }
+        System.out.println();
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        TicTacToe game = new TicTacToe();
+        System.out.println("Tic-Tac-Toe (enter moves as row and column: 0 2)");
+        while (true) {
+            game.printBoard();
+            System.out.printf("Player %c, enter row and column: ", game.getTurn());
+            String line = sc.nextLine().trim();
+            if (line.equalsIgnoreCase("exit")) break;
+            String[] parts = line.split("\\s+");
+            if (parts.length < 2) { System.out.println("Enter two numbers."); continue; }
+            int r = Integer.parseInt(parts[0]);
+            int c = Integer.parseInt(parts[1]);
+            if (!game.move(r, c)) { System.out.println("Invalid move."); continue; }
+            if (game.checkWin()) {
+                game.printBoard();
+                System.out.printf("Player %c wins!%n", game.getTurn());
+                break;
+            }
+            if (game.boardFull()) {
+                game.printBoard();
+                System.out.println("It's a draw.");
+                break;
+            }
+            game.swapTurn();
+        }
+        sc.close();
+    }
+}
